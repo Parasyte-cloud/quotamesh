@@ -1,0 +1,16 @@
+{
+  "name": "@quotamesh/validation",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "build": "echo validation-build-placeholder",
+    "lint": "echo validation-lint-placeholder",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.0",
+    "vitest": "^3.2.0"
+  }
+}
