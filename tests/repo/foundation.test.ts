@@ -39,7 +39,9 @@ describe("QuotaMesh repository foundation", () => {
     expect(gitignore).toContain("secrets/");
 
     const example = readFileSync(resolve(root, ".env.example"), "utf8");
-    expect(example).toContain("REPLACE_WITH_RANDOM_SECRET");
+    expect(example).toContain("QUOTAMESH_AUTH_DATABASE_URL=");
+    expect(example).toContain("QUOTAMESH_TENANT_DATABASE_URL=");
+    expect(example).toContain("<local-password>");
     expect(example).not.toMatch(/sk_live_|ghp_|AKIA[0-9A-Z]{16}/);
   });
 });

@@ -10,6 +10,10 @@ describe("security-first CI policy", () => {
       expect(ci).toContain(command);
     }
     expect(ci).toContain("dependency-review-action");
+    expect(ci).toContain("database-security");
+    expect(ci).toContain("tests/database/rls.sql");
+    expect(ci).toContain("tests/database/auth-session.sql");
+    expect(ci).toContain("tests/database/runtime-privileges.sql");
   });
 
   it("enables CodeQL and Dependabot", () => {

@@ -8,5 +8,17 @@ routes = [
   { pattern = "api.quotamesh.parasyte.cloud/*", zone_name = "parasyte.cloud" }
 ]
 
-# Secrets and private connection strings must be configured with `wrangler secret put`
-# or Cloudflare dashboard secrets. Never place them in this file.
+# REQUIRED PRODUCTION BINDINGS
+# Configure two Cloudflare Hyperdrive bindings before deployment so authentication
+# and tenant data use separate PostgreSQL identities with least privilege.
+# Never commit database connection strings or credentials here.
+#
+# [[hyperdrive]]
+# binding = "QUOTAMESH_AUTH_HYPERDRIVE"
+# id = "<cloudflare-hyperdrive-id-for-auth-role>"
+#
+# [[hyperdrive]]
+# binding = "QUOTAMESH_TENANT_HYPERDRIVE"
+# id = "<cloudflare-hyperdrive-id-for-tenant-role>"
+#
+# Secrets must be configured with `wrangler secret put` or the Cloudflare dashboard.

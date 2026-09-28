@@ -18,10 +18,10 @@ describe("Cloudflare deployment configuration", () => {
     }
   });
 
-  it("documents runtime secret names without secret values", () => {
+  it("documents separate least-privilege Hyperdrive identities", () => {
     const docs = read("infrastructure/cloudflare/README.md");
-    expect(docs).toContain("DATABASE_URL");
-    expect(docs).toContain("SESSION_PEPPER");
-    expect(docs).toContain("Do not commit values");
+    expect(docs).toContain("QUOTAMESH_AUTH_HYPERDRIVE");
+    expect(docs).toContain("QUOTAMESH_TENANT_HYPERDRIVE");
+    expect(docs).toContain("Do not grant `BYPASSRLS`");
   });
 });

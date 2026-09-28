@@ -1,5 +1,5 @@
 import { and, eq } from "drizzle-orm";
-import { sites, withTenant, type Site } from "@quotamesh/database";
+import { sites, withTenant, type Site, type TenantScope } from "@quotamesh/database";
 import type { CreateSiteInput, OrganizationId, SiteId } from "@quotamesh/validation";
 
 export interface SiteRepository {
@@ -8,12 +8,12 @@ export interface SiteRepository {
   create(organizationId: OrganizationId, input: CreateSiteInput): Promise<Site>;
 }
 
-export function createSiteRepository(): SiteRepository {
+export function createSiteRepository(runWithTenant: TenantScope = withTenant): SiteRepository {
   return {
-    list: (organizationId) => withTenant(organizationId, async (tx) =>
+    list: (organizationId) => runWithTenant(organizationId, async (tx) =>
       tx.select().from(sites).where(eq(sites.organizationId, organizationId))),
 
-    getById: (organizationId, siteId) => withTenant(organizationId, async (tx) => {
+    getById: (organizationId, siteId) => runWithTenant(organizationId, async (tx) => {
       const [site] = await tx
         .select()
         .from(sites)
@@ -22,7 +22,7 @@ export function createSiteRepository(): SiteRepository {
       return site ?? null;
     }),
 
-    create: (organizationId, input) => withTenant(organizationId, async (tx) => {
+    create: (organizationId, input) => runWithTenant(organizationId, async (tx) => {
       const [site] = await tx
         .insert(sites)
         .values({ ...input, organizationId })

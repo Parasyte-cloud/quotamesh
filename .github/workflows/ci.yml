@@ -42,6 +42,66 @@ jobs:
       - name: Build
         run: pnpm build
 
+  database-security:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres-ci-only
+          POSTGRES_DB: quotamesh_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d quotamesh_ci"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: 127.0.0.1
+      PGPORT: 5432
+      PGDATABASE: quotamesh_ci
+      PGUSER: postgres
+      PGPASSWORD: postgres-ci-only
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+      - name: Apply database migrations
+        run: |
+          psql -v ON_ERROR_STOP=1 -f packages/database/migrations/0001_tenant_core.sql
+          psql -v ON_ERROR_STOP=1 -f packages/database/migrations/0002_persistent_sessions.sql
+      - name: Create least-privilege runtime roles
+        run: |
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          CREATE ROLE quotamesh_auth LOGIN PASSWORD 'auth-ci-only';
+          CREATE ROLE quotamesh_tenant LOGIN PASSWORD 'tenant-ci-only';
+          GRANT USAGE ON SCHEMA public TO quotamesh_auth, quotamesh_tenant;
+          GRANT EXECUTE ON FUNCTION resolve_auth_session(text) TO quotamesh_auth;
+          GRANT SELECT ON organizations, sites TO quotamesh_tenant;
+          GRANT INSERT, UPDATE, DELETE ON sites TO quotamesh_tenant;
+          SQL
+      - name: Load RLS fixtures as migration owner
+        run: psql -v ON_ERROR_STOP=1 -f tests/database/rls-fixtures.sql
+      - name: Verify tenant RLS as non-owner runtime role
+        env:
+          PGUSER: quotamesh_tenant
+          PGPASSWORD: tenant-ci-only
+        run: psql -v ON_ERROR_STOP=1 -f tests/database/rls.sql
+      - name: Verify persistent session resolution through narrow auth function
+        env:
+          PGUSER: quotamesh_auth
+          PGPASSWORD: auth-ci-only
+        run: psql -v ON_ERROR_STOP=1 -f tests/database/auth-session.sql
+      - name: Verify database least privilege
+        run: psql -v ON_ERROR_STOP=1 -f tests/database/runtime-privileges.sql
+
   dependency-review:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
