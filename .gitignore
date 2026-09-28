@@ -21,3 +21,6 @@ private/
 
 # TypeScript incremental build state
 *.tsbuildinfo
+
+# OpenNext build output
+apps/web/.open-next/
