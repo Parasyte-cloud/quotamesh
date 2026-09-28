@@ -1,0 +1,6 @@
+# Security-sensitive infrastructure and auth changes require an explicit owner review.
+* @Biolajr
+/packages/auth/ @Biolajr
+/packages/database/ @Biolajr
+/infrastructure/ @Biolajr
+/.github/ @Biolajr

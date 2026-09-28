@@ -20,7 +20,7 @@ describe("QuotaMesh repository foundation", () => {
       "apps/api/package.json",
       "packages/config/package.json",
       "packages/validation/package.json",
-      "vitest.workspace.ts"
+      "vitest.config.ts"
     ];
     for (const file of expected) expect(existsSync(resolve(root, file)), file).toBe(true);
   });

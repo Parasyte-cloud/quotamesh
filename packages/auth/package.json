@@ -1,20 +1,21 @@
 {
-  "name": "@quotamesh/validation",
+  "name": "@quotamesh/auth",
   "private": true,
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "build": "echo validation-build-placeholder",
-    "lint": "echo validation-lint-placeholder",
+    "build": "tsc --noEmit",
+    "lint": "tsc --noEmit",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
+  },
+  "dependencies": {
+    "@noble/hashes": "^2.0.1",
+    "@quotamesh/validation": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.9.0",
     "vitest": "^3.2.0"
-  },
-  "dependencies": {
-    "zod": "^4.1.11"
   },
   "exports": {
     ".": "./src/index.ts"
