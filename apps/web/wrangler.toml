@@ -1,11 +1,11 @@
-name = "quotamesh-web"
+name = "quotamesh"
+main = ".open-next/worker.js"
 compatibility_date = "2026-09-28"
 compatibility_flags = ["nodejs_compat"]
-workers_dev = true
 
-routes = [
-  { pattern = "quotamesh.parasyte.cloud/*", zone_name = "parasyte.cloud" }
-]
+[assets]
+directory = ".open-next/assets"
+binding = "ASSETS"
 
-[vars]
-QUOTAMESH_API_ORIGIN = "https://api.quotamesh.parasyte.cloud"
+[observability]
+enabled = true
